@@ -342,9 +342,44 @@ def and_or_graph_search(problem):
     "[Fig. 4.11]"
     unimplemented()
 
-def online_dfs_agent(s1):
-    "[Fig. 4.21]"
-    unimplemented()
+class OnlineDFSAgent:
+    def __init__(self, problem):
+        self.problem = problem
+        self.s = None
+        self.a = None
+        self.untried = defaultdict(list)
+        self.unbacktracked = defaultdict(list)
+        self.result = {}
+
+        def update_state(self, percept):
+            raise NotImplementedError
+        
+        def run(self, percept):
+            current_state = self.update_state(percept)
+            if self.problem.goal_test(current_state):
+                self.a = None
+            else:
+                if current_state not in self.untried.keys():
+                    self.untried[current_state] = \
+                        self.problem.actions(current_state)
+                if self.s is not None:
+                    if current_state != self.result[(self.s, self.a)]:
+                        self.result[(self.s, self.a)] = current_state
+                        unbacktracked[(current_state)].insert(0, self.s)
+                if len(self.untried[current_state]) == 0:
+                    if len(self.unbacktracked[current_state]) == 0:
+                        self.a = None
+                    else:
+                        unbacktracked_pop = \
+                            self.unbacktracked[current_state].pop(0)
+                        for (s, b) in self.result.keys():
+                            if self.result[(s,b)] == unbacktracked_pop:
+                                self.a = b
+                                break
+                else:
+                    self.a = self.untried[current_state].pop(0)
+            self.s = current_state
+            return self.a
 
 def lrta_star_agent(s1):
     "[Fig. 4.24]"
