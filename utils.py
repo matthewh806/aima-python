@@ -562,6 +562,10 @@ def turn_right(heading):
 def turn_left(heading):
     return turn_heading(heading, +1)
 
+def manhattan_distance( (ax, ay), (bx, by)):
+    "The manhattan distance between two (x, y) points."
+    return abs( ax - bx ) + abs( ay - by )
+
 def distance((ax, ay), (bx, by)):
     "The distance between two (x, y) points."
     return math.hypot((ax - bx), (ay - by))
