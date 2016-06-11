@@ -37,16 +37,30 @@ class Layout:
     def isGoal(self, pos):
         return self.goal == pos
 
-    def getLegalPositions(self):
-        x, y = self.position
-        legal = [] 
+    def getLegalMoves(self, pos):
+        x, y = pos
+        legal = {}
         # Check up, down, left, right squares - No diagonal moves
-        if not self.isWall((x, y+1)): legal.append((x, y+1))
-        if not self.isWall((x, y-1)): legal.append((x, y-1))
-        if not self.isWall((x+1, y)): legal.append((x+1, y))
-        if not self.isWall((x-1, y)): legal.append((x-1, y))
+        if not self.isWall((x, y+1)): legal["up"] = (x, y+1)
+        if not self.isWall((x, y-1)): legal["down"] = (x, y-1)
+        if not self.isWall((x+1, y)): legal["right"] = (x+1, y)
+        if not self.isWall((x-1, y)): legal["left"] = (x-1, y)
 
         return legal
+
+    def getNeighbourPosition(self, pos, dir):
+        x, y = pos
+        xf, yf = pos 
+        if dir == "up":
+            yf += 1
+        if dir == "down":
+            yf -= 1
+        if dir == "right":
+            xf += 1
+        if dir == "left":
+            xf -=1
+
+        return (xf, yf)
 
     def getRandomLegalPosition(self):
         x = random.choice(range(self.width))
@@ -86,8 +100,8 @@ class Layout:
         elif layoutChar == 'S':
             self.start = (x, y)
             self.position = (x, y)
-        elif layoutChar == 'E':
-            self.end = (x,y)
+        elif layoutChar == 'G':
+            self.goal = (x,y)
 
 def getLayout(name, back = 2):
     if name.endswith('.lay'):
