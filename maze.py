@@ -1,7 +1,8 @@
 import layout
 import sys
+from utils import manhattan_distance
 from search import Problem
-from search import breadth_first_tree_search, depth_first_graph_search
+from search import *
 
 class MazeProblem(Problem):
     def __init__(self, initial, goal, maze):
@@ -12,6 +13,7 @@ class MazeProblem(Problem):
         print self.maze
         print "start: ", self.initial
         print "goal: ", self.goal
+        print "\n"
     
     def actions(self, state):
         "The actions at a maze pos are just neighbours"
@@ -23,6 +25,18 @@ class MazeProblem(Problem):
 
     def value(self, state):
         raise NotImplementedError
+    
+    def h(self, node):
+        "h function is manhattan distance from a node's state to goal."
+        return manhattan_distance(node.state, maze.goal)
+
+class OnlineDFSMazeAgent(OnlineDFSAgent):
+    def __init__(self, problem):
+        OnlineDFSAgent.__init__(self, problem)
+    
+    def update_state(self, percept):
+        "percept is just the new state"
+        return percept
 
 def readCommand(argv):
     """
@@ -36,7 +50,7 @@ def readCommand(argv):
                       help='The maze for the agent to solve')
     parser.add_argument('-s', '--search', default='dfs',
                         type=str, help='The search algorithm for the agent to \
-                        use', choices=['dfs', 'bfs'])
+                        use', choices=['dfs', 'bfs', 'astar'])
     args = parser.parse_args()
     return args
 
@@ -47,12 +61,15 @@ if __name__ == "__main__":
     if maze is None:
         raise NameError("Could not find maze!")
 
+    mazeProblem = MazeProblem(maze.start, maze.goal, maze)
     if args.search == "dfs":
         print "depth-first-search" 
-        print depth_first_graph_search(MazeProblem(maze.start, maze.goal,
-                                                   maze)).solution()
+        print depth_first_graph_search(mazeProblem).solution() 
+        
     elif args.search == "bfs":
         print "breadth-first-search" 
-        print breadth_first_tree_search(MazeProblem(maze.start, maze.goal,
-                                                    maze)).solution()
+        print breadth_first_tree_search(mazeProblem).solution()
+    elif args.search == "astar":
+        print "a-star search with manhattan distance heuristic"
+        print astar_search(mazeProblem).solution()
     
