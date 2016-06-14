@@ -3,7 +3,6 @@ from collections import defaultdict
 import networkx as nx
 import matplotlib.pyplot as plt
 import matplotlib
-from matplotlib.widgets import Slider, Button, RadioButtons
 
 class VisualCSP(CSP):
 
