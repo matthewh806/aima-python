@@ -611,3 +611,6 @@ __doc__ += random_tests("""
 >>> min_conflicts(NQueensCSP(8), max_steps=10000)
 {0: 5, 1: 0, 2: 4, 3: 1, 4: 7, 5: 2, 6: 6, 7: 3}
 """)
+
+if __name__ == "__main__":
+    print backtracking_search(australia)
