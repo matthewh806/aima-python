@@ -22,36 +22,50 @@ def make_visual(csp):
     return VisualCSP(csp.vars, csp.domains, csp.neighbors,
                      csp.constraints)
 
-def make_update_step_function(graph, visual_csp):
+class CspPlotter():
 
-    def draw_graph(graph):
-        g = nx.Graph(graph)
-        pos = nx.spring_layout(g, k=0.15)
-        return (g, pos)
+    def __init__(self, graph, visual_csp):
+        self.graph = graph
+        self.visual_csp = visual_csp
+        self.min = 0
+        self.max = len(self.visual_csp.assignment_history) - 1
+        self.cur = 0
+        self.g = nx.Graph(self.graph)
+        self.pos = nx.spring_layout(self.g, k=0.15)
+        self.update()
     
-    g, pos = draw_graph(graph)
-
-    def update_step(iteration):
-        current = visual_csp.assignment_history[iteration]
+    def update(self):
+        current = self.visual_csp.assignment_history[self.cur]
         current = defaultdict(lambda: 'Black', current)
 
-        colors = [current[n] for n in g.node.keys()]
-        nx.draw(g, pos, node_color=colors, node_size=500)
+        colors = [current[n] for n in self.g.node.keys()]
+        nx.draw(self.g, self.pos, node_color=colors, node_size=500)
         
-        labels = {label:label for label in g.node}
-        label_pos = {key:[value[0], value[1]+0.03] for key, value in pos.items()}
-        nx.draw_networkx_labels(g, label_pos, labels, font_size=20)
+        labels = {label:label for label in self.g.node}
+        label_pos = {key:[value[0], value[1]+0.03] for key, value in self.pos.items()}
+        nx.draw_networkx_labels(self.g, label_pos, labels, font_size=20)
+        
+        plt.title('Visual CSP: Australia map coloring',
+                  horizontalalignment='center')
+        plt.draw()
 
-        plt.show()
+    def on_press(self,event):
+        if event.key not in ('left', 'right'):
+            return
+        if event.key == 'right':
+            self.cur += 1
+        else:
+            self.cur -= 1
 
-    return update_step
+        self.cur = max(self.min, min(self.cur, self.max))
+        self.update() 
 
 
 if __name__ == "__main__":
     vcoloring_problem = make_visual(australia)
     result = backtracking_search(vcoloring_problem)
-    step_func = make_update_step_function(australia.neighbors,
-                                          vcoloring_problem)
+    plotter = CspPlotter(australia.neighbors, vcoloring_problem)
 
-    for i in range(len(vcoloring_problem.assignment_history) ):
-        step_func(i)
+    fig = plt.gcf()
+    fig.canvas.mpl_connect('key_press_event', plotter.on_press)
+    plt.show()
