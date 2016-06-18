@@ -2,7 +2,7 @@ from csp import *
 from collections import defaultdict
 import networkx as nx
 import matplotlib.pyplot as plt
-import matplotlib
+from matplotlib import lines 
 
 class VisualCSP(CSP):
 
@@ -45,8 +45,6 @@ class CspPlotter():
         label_pos = {key:[value[0], value[1]+0.03] for key, value in self.pos.items()}
         nx.draw_networkx_labels(self.g, label_pos, labels, font_size=20)
         
-        plt.title('Visual CSP: Australia map coloring',
-                  horizontalalignment='center')
         plt.draw()
 
     def on_press(self,event):
@@ -68,4 +66,9 @@ if __name__ == "__main__":
 
     fig = plt.gcf()
     fig.canvas.mpl_connect('key_press_event', plotter.on_press)
+    plt.title('Visual CSP: Australia map coloring',
+          horizontalalignment='center')
+    black_circle = lines.Line2D([], [], color="Black", marker='o',
+                                markersize=15, markerfacecolor="black")
+    plt.legend([black_circle], ['Unassigned'], numpoints=1)
     plt.show()
